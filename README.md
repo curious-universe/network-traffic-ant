@@ -6,7 +6,7 @@ Network traffic ant, base on pcap
 ## start a http server 
 
 ```shell
-make dev-http
+make dev_http
 ```
 
 ## debug 
