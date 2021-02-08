@@ -2,24 +2,28 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/whiteCcinn/network-traffic-ant/constant"
-
 	"github.com/spf13/cobra"
 )
 
+type recordCmdArgs struct {
+	Interface string
+	BPF       string
+}
+
+var RecordCmdArgs recordCmdArgs
+
 func init() {
+	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "en0", "Name of network card interface")
+	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
 	rootCmd.AddCommand(recordCmd)
 }
 
 var recordCmd = &cobra.Command{
 	Use:   "record",
-	Short: getVersionCmdShort(),
-	Long:  getVersionCmdLong(),
+	Short: getRecordCmdShort(),
+	Long:  getRecordCmdLong(),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Version is v%s\n", constant.VERSION)
-		fmt.Printf("BuildTS is %s\n", constant.BuildTS)
-		fmt.Printf("GitHash is %s\n", constant.GitHash)
-		fmt.Printf("GitBranch is %s\n", constant.GitBranch)
+		fmt.Printf("%+v\n", RecordCmdArgs)
 	},
 }
 
@@ -28,5 +32,5 @@ func getRecordCmdShort() string {
 }
 
 func getRecordCmdLong() string {
-	return fmt.Sprintf("This cmd is record")
+	return fmt.Sprintf("This cmd is record long")
 }
