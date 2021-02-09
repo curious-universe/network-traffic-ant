@@ -13,7 +13,7 @@ type recordCmdArgs struct {
 var RecordCmdArgs recordCmdArgs
 
 func init() {
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "en0", "Name of network card interface")
+	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "s", "Name of network card interface")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
 	rootCmd.AddCommand(recordCmd)
 }

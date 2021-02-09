@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/whiteCcinn/network-traffic-ant/constant"
+	"github.com/curious-universe/network-traffic-ant/constant"
 
 	"github.com/spf13/cobra"
 )

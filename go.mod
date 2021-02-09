@@ -1,4 +1,4 @@
-module github.com/whiteCcinn/network-traffic-ant
+module github.com/curious-universe/network-traffic-ant
 
 go 1.14
 

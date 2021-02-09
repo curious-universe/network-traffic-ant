@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/whiteCcinn/network-traffic-ant/cmd"
+import "github.com/curious-universe/network-traffic-ant/cmd"
 
 func main() {
 	cmd.Execute()
