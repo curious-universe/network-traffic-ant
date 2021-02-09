@@ -1,0 +1,39 @@
+# Copyright 2021 curious-universe, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+PROJECT=network_traffic_ant
+GOPATH ?= $(shell go env GOPATH)
+P=8
+
+# Ensure GOPATH is set before running build process.
+ifeq "$(GOPATH)" ""
+  $(error Please set the environment variable GOPATH before running `make`)
+endif
+FAIL_ON_STDOUT := awk '{ print } END { if (NR > 0) { exit 1 } }'
+
+CURDIR := $(shell pwd)
+path_to_add := $(addsuffix /bin,$(subst :,/bin:,$(GOPATH))):$(PWD)/tools/bin
+export PATH := $(path_to_add):$(PATH)
+
+GO              := GO111MODULE=on go
+GOBUILD         := $(GO) build $(BUILD_FLAG)
+
+ARCH      := "`uname -s`"
+LINUX     := "Linux"
+MAC       := "Darwin"
+
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.BuildTS=$(shell date -u '+%Y-%m-%d %H:%M:%S')"
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.GitHash=$(shell git rev-parse HEAD)"
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.GitBranch=$(shell git rev-parse --abbrev-ref HEAD)"
+
+TARGET = ""

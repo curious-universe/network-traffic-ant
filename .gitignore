@@ -19,3 +19,4 @@ go.sum
 nta
 
 .idea/
+*.old
