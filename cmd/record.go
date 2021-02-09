@@ -28,9 +28,9 @@ var recordCmd = &cobra.Command{
 }
 
 func getRecordCmdShort() string {
-	return fmt.Sprintf("This cmd is record")
+	return fmt.Sprintf("This cmd is begining record")
 }
 
 func getRecordCmdLong() string {
-	return fmt.Sprintf("This cmd is record long")
+	return fmt.Sprintf("This cmd is begining record, this will push the network flow to the target")
 }
