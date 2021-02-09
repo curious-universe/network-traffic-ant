@@ -1,4 +1,4 @@
-# Copyright 2021 WhiteCcinn, Inc.
+# Copyright 2021 curious-universe, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ ARCH      := "`uname -s`"
 LINUX     := "Linux"
 MAC       := "Darwin"
 
-LDFLAGS += -X "github.com/whiteCcinn/network-traffic-ant/constant.BuildTS=$(shell date -u '+%Y-%m-%d %H:%M:%S')"
-LDFLAGS += -X "github.com/whiteCcinn/network-traffic-ant/constant.GitHash=$(shell git rev-parse HEAD)"
-LDFLAGS += -X "github.com/whiteCcinn/network-traffic-ant/constant.GitBranch=$(shell git rev-parse --abbrev-ref HEAD)"
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.BuildTS=$(shell date -u '+%Y-%m-%d %H:%M:%S')"
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.GitHash=$(shell git rev-parse HEAD)"
+LDFLAGS += -X "github.com/curious-universe/network-traffic-ant/constant.GitBranch=$(shell git rev-parse --abbrev-ref HEAD)"
 
 TARGET = ""
