@@ -14,6 +14,7 @@ RUN echo \
         deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib \
     > /etc/apt/sources.list && \
     apt-get update -y; \
-    apt-get install -y net-tools
+    apt-get install -y net-tools; \
+    apt-get install libpcap-dev
 
 WORKDIR /www

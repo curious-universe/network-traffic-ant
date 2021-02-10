@@ -8,7 +8,7 @@ Network traffic ant, base on pcap
 docker build -t nta .
 
 // run a container
-docker run -it --name ntac --privileged -w /www -v$(PWD):/www ntac bash
+docker run -it --name ntac --privileged -w /www -v$(pwd):/www nta bash
 
 // next start container
 docker start -i ntac
