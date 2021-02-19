@@ -14,17 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package constant
+package nerror
 
-// Version information.
-const (
-	AppName = "network-traffic-ant"
-	VERSION = "1.0.0"
-)
-
-// Dynamic Version information.
+// Process
 var (
-	BuildTS   = "None"
-	GitHash   = "None"
-	GitBranch = "None"
+	ErrNotFoundProcess = ProcessError{"Can't not find the process by name"}
 )

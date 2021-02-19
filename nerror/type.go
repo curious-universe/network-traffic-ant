@@ -14,17 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package constant
+package nerror
 
-// Version information.
-const (
-	AppName = "network-traffic-ant"
-	VERSION = "1.0.0"
-)
+type ProcessError struct {
+	Message string
+}
 
-// Dynamic Version information.
-var (
-	BuildTS   = "None"
-	GitHash   = "None"
-	GitBranch = "None"
-)
+func (e ProcessError) Error() string {
+	return e.Message
+}
