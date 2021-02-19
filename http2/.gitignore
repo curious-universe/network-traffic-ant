@@ -16,9 +16,4 @@
 
 
 go.sum
-nta
-
-.idea/
-*.old
-/nethogs/
-bin/
+server

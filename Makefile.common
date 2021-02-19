@@ -13,6 +13,8 @@
 
 PROJECT=network_traffic_ant
 GOPATH ?= $(shell go env GOPATH)
+SOURCE = $(shell ls -1 *.go | grep -v _test.go)
+BIN_NAME=nta
 P=8
 
 # Ensure GOPATH is set before running build process.
