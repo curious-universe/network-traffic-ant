@@ -14,17 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package constant
+package process
 
-// Version information.
-const (
-	AppName = "network-traffic-ant"
-	VERSION = "1.0.0"
+import (
+	"github.com/curious-universe/go-ps"
+	"github.com/curious-universe/network-traffic-ant/nerror"
 )
 
-// Dynamic Version information.
-var (
-	BuildTS   = "None"
-	GitHash   = "None"
-	GitBranch = "None"
-)
+// FindProcess find the process by binary program
+// todo: There are bugs if the binary has the same name
+func FindProcess(key string) (p *ps.Process, err error) {
+	procs, _ := ps.Processes()
+	for _, proc := range procs {
+		if proc.Executable() == key {
+			return &proc, nil
+		}
+	}
+
+	return nil, nerror.ErrNotFoundProcess
+}
