@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"github.com/google/gopacket/pcap"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 // testCmd represents the test command
@@ -52,9 +53,32 @@ func init() {
 
 func test() {
 	fmt.Println("test called")
+	fmt.Println("findAllDevice", findAllDevice())
+	fmt.Println("findFirstDevice", findFirstDevice())
+	fmt.Println("createHandle", createHandle())
+}
+
+func createHandle() *pcap.Handle {
+	device := findFirstDevice()
+	handle, err := pcap.OpenLive(device.Name, 1024, false, 100*time.Millisecond)
+	if err != nil {
+		panic(err)
+	}
+	return handle
+}
+
+func findAllDevice() (devices []pcap.Interface) {
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("网络", devices)
+	return
+}
+
+func findFirstDevice() pcap.Interface {
+	devices, err := pcap.FindAllDevs()
+	if err != nil {
+		panic(err)
+	}
+	return devices[0]
 }
