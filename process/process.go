@@ -22,14 +22,39 @@ import (
 )
 
 // FindProcess find the process by binary program
-// todo: There are bugs if the binary has the same name
-func FindProcess(key string) (p *ps.Process, err error) {
-	procs, _ := ps.Processes()
-	for _, proc := range procs {
-		if proc.Executable() == key {
-			return &proc, nil
+func FindProcessByName(key string) (p *ps.Process, err error) {
+	keyAllProcess := FindKeyAllProcess(key)
+
+	if len(keyAllProcess) == 1 {
+		return &keyAllProcess[0], nil
+	} else if len(keyAllProcess) > 1 {
+		return nil, nerror.ErrTooManySameNameProcess
+	} else {
+		return nil, nerror.ErrNotFoundProcess
+	}
+}
+
+func FindProcessByNameAndPid(key string, pid int) (p *ps.Process, err error) {
+	keyAllProcess := FindKeyAllProcess(key)
+
+	if len(keyAllProcess) > 0 {
+		for _, pp := range keyAllProcess {
+			if pp.Pid() == pid {
+				return &pp, nil
+			}
 		}
 	}
 
 	return nil, nerror.ErrNotFoundProcess
+}
+
+func FindKeyAllProcess(key string) []ps.Process {
+	allProcess := make([]ps.Process, 0)
+	procs, _ := ps.Processes()
+	for _, proc := range procs {
+		if proc.Executable() == key {
+			allProcess = append(allProcess, proc)
+		}
+	}
+	return allProcess
 }

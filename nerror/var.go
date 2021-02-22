@@ -19,4 +19,5 @@ package nerror
 // Process
 var (
 	ErrNotFoundProcess = ProcessError{"Can't not find the process by name"}
+	ErrTooManySameNameProcess = ProcessError{"Too many processes with the same name"}
 )

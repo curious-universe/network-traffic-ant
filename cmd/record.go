@@ -18,8 +18,9 @@ package cmd
 
 import (
 	"fmt"
-	ps "github.com/curious-universe/go-ps"
 	"github.com/curious-universe/network-traffic-ant/config"
+	"github.com/curious-universe/network-traffic-ant/nerror"
+	"github.com/curious-universe/network-traffic-ant/process"
 	"github.com/curious-universe/network-traffic-ant/zaplog"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
@@ -31,9 +32,10 @@ import (
 )
 
 type recordCmdArgs struct {
-	Interface   string
-	BPF         string
-	ProcessName string
+	Interface     string
+	BPF           string
+	ProcessBinary string
+	ProcessPid    int
 }
 
 var RecordCmdArgs recordCmdArgs
@@ -41,10 +43,11 @@ var RecordCmdArgs recordCmdArgs
 func init() {
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "lo", "Name of network card interface")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.ProcessName, "process", "p", "", "The Process Name")
+	recordCmd.Flags().StringVarP(&RecordCmdArgs.ProcessBinary, "process_binary", "p", "", "The Process Name")
+	recordCmd.Flags().IntVarP(&RecordCmdArgs.ProcessPid, "pid", "i", 0, "The Process pid")
 
 	if err := recordCmd.MarkFlagRequired("process"); err != nil {
-
+		zaplog.S().Fatal(err)
 	}
 	rootCmd.AddCommand(recordCmd)
 }
@@ -54,27 +57,25 @@ var recordCmd = &cobra.Command{
 	Short: getRecordCmdShort(),
 	Long:  getRecordCmdLong(),
 	Run: func(cmd *cobra.Command, args []string) {
-		zaplog.S().Infof("%#v", RecordCmdArgs)
 		zaplog.S().Infof("%#v", config.GetGlobalConfig())
-		procs, _ := ps.Processes()
-
-		for _, p := range procs {
-			zaplog.S().Infof("%#v", p)
-			zaplog.S().Infof("%#v", p.Executable())
+		// Find Process
+		ps, err := process.FindProcessByName(RecordCmdArgs.ProcessBinary)
+		if err == nerror.ErrTooManySameNameProcess {
+			ps, err = process.FindProcessByNameAndPid(RecordCmdArgs.ProcessBinary, RecordCmdArgs.ProcessPid)
+			if err == nerror.ErrNotFoundProcess {
+				zaplog.S().Fatal(nerror.ErrNotFoundProcess.Error())
+			}
 		}
-		zaplog.S().Infof("%#v", procs)
+		nerror.MustNil(err)
 
 		// Open device
 		handle, err := pcap.OpenLive(RecordCmdArgs.Interface, 1024, false, 30*time.Second)
-		if err != nil {
-			log.Fatal(err)
-		}
+		nerror.MustNil(err)
 		defer handle.Close()
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 		for packet := range packetSource.Packets() {
 			printPacketInfo(packet)
 		}
-
 	},
 }
 
