@@ -23,3 +23,12 @@ type ProcessError struct {
 func (e ProcessError) Error() string {
 	return e.Message
 }
+
+
+type CmdError struct {
+	Message string
+}
+
+func (e CmdError) Error() string {
+	return e.Message
+}

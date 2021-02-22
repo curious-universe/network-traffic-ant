@@ -26,7 +26,6 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/spf13/cobra"
-	"log"
 	"strings"
 	"time"
 )
@@ -61,6 +60,9 @@ var recordCmd = &cobra.Command{
 		// Find Process
 		ps, err := process.FindProcessByName(RecordCmdArgs.ProcessBinary)
 		if err == nerror.ErrTooManySameNameProcess {
+			if RecordCmdArgs.ProcessPid == 0 {
+				zaplog.S().Fatal(nerror.ErrProcessPidMustNotNil.Error())
+			}
 			ps, err = process.FindProcessByNameAndPid(RecordCmdArgs.ProcessBinary, RecordCmdArgs.ProcessPid)
 			if err == nerror.ErrNotFoundProcess {
 				zaplog.S().Fatal(nerror.ErrNotFoundProcess.Error())

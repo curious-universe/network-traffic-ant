@@ -16,6 +16,11 @@ limitations under the License.
 
 package nerror
 
+// Cmd
+var (
+	ErrProcessPidMustNotNil = CmdError{"Because there are multiple processes with the same name, the PID is not allowed to be null"}
+)
+
 // Process
 var (
 	ErrNotFoundProcess = ProcessError{"Can't not find the process by name"}
