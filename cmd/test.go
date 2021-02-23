@@ -20,6 +20,7 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"github.com/spf13/cobra"
+	"io"
 	"time"
 )
 
@@ -60,6 +61,16 @@ func test() {
 	packetSource, closeSource := createSource()
 	defer closeSource()
 	fmt.Println("createSource", packetSource)
+	cnt := 0
+	for {
+		packet, err := packetSource.NextPacket()
+		if err == io.EOF {
+			return
+		} else if err == nil {
+			cnt++
+			fmt.Println(cnt, packet)
+		}
+	}
 }
 
 func createSource() (*gopacket.PacketSource, func()) {
