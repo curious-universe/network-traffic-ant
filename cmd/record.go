@@ -43,9 +43,9 @@ func init() {
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "lo", "Name of network card interface")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.ProcessBinary, "process_binary", "p", "", "The Process Name")
-	recordCmd.Flags().IntVarP(&RecordCmdArgs.ProcessPid, "pid", "i", 0, "The Process pid")
+	recordCmd.Flags().IntVarP(&RecordCmdArgs.ProcessPid, "pid", "", 0, "The Process pid")
 
-	if err := recordCmd.MarkFlagRequired("process"); err != nil {
+	if err := recordCmd.MarkFlagRequired("process_binary"); err != nil {
 		zaplog.S().Fatal(err)
 	}
 	rootCmd.AddCommand(recordCmd)
@@ -58,12 +58,12 @@ var recordCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		zaplog.S().Infof("%#v", config.GetGlobalConfig())
 		// Find Process
-		ps, err := process.FindProcessByName(RecordCmdArgs.ProcessBinary)
+		_, err := process.FindProcessByName(RecordCmdArgs.ProcessBinary)
 		if err == nerror.ErrTooManySameNameProcess {
 			if RecordCmdArgs.ProcessPid == 0 {
 				zaplog.S().Fatal(nerror.ErrProcessPidMustNotNil.Error())
 			}
-			ps, err = process.FindProcessByNameAndPid(RecordCmdArgs.ProcessBinary, RecordCmdArgs.ProcessPid)
+			_, err = process.FindProcessByNameAndPid(RecordCmdArgs.ProcessBinary, RecordCmdArgs.ProcessPid)
 			if err == nerror.ErrNotFoundProcess {
 				zaplog.S().Fatal(nerror.ErrNotFoundProcess.Error())
 			}

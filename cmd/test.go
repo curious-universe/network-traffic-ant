@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"github.com/spf13/cobra"
 	"time"
@@ -56,6 +57,14 @@ func test() {
 	fmt.Println("findAllDevice", findAllDevice())
 	fmt.Println("findFirstDevice", findFirstDevice())
 	fmt.Println("createHandle", createHandle())
+	packetSource, closeSource := createSource()
+	defer closeSource()
+	fmt.Println("createSource", packetSource)
+}
+
+func createSource() (*gopacket.PacketSource, func()) {
+	handle := createHandle()
+	return gopacket.NewPacketSource(handle, handle.LinkType()), handle.Close
 }
 
 func createHandle() *pcap.Handle {
