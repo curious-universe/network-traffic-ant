@@ -26,6 +26,7 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/spf13/cobra"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -40,7 +41,7 @@ type recordCmdArgs struct {
 var RecordCmdArgs recordCmdArgs
 
 func init() {
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", "lo", "Name of network card interface")
+	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", findFirstDevice().Name, "Name of network card interface")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
 	recordCmd.Flags().StringVarP(&RecordCmdArgs.ProcessBinary, "process_binary", "p", "", "The Process Name")
 	recordCmd.Flags().IntVarP(&RecordCmdArgs.ProcessPid, "pid", "", 0, "The Process pid")
@@ -89,7 +90,10 @@ func getRecordCmdLong() string {
 	return fmt.Sprintf("This cmd is begining record, this will push the network flow to the target")
 }
 
+var printCnt = 1
+
 func printPacketInfo(packet gopacket.Packet) {
+	fmt.Println("=============printPacketInfo " + strconv.Itoa(printCnt) + "=============")
 	// Let's see if the packet is an ethernet packet
 	ethernetLayer := packet.Layer(layers.LayerTypeEthernet)
 	if ethernetLayer != nil {
@@ -155,4 +159,21 @@ func printPacketInfo(packet gopacket.Packet) {
 	if err := packet.ErrorLayer(); err != nil {
 		fmt.Println("Error decoding some part of the packet:", err)
 	}
+	printCnt++
+}
+
+func findAllDevice() (devices []pcap.Interface) {
+	devices, err := pcap.FindAllDevs()
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func findFirstDevice() pcap.Interface {
+	devices, err := pcap.FindAllDevs()
+	if err != nil {
+		panic(err)
+	}
+	return devices[0]
 }
