@@ -32,6 +32,8 @@ services:
       - ./ElasticSearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
       - ./ElasticSearch/data:/usr/share/elasticsearch/data
       - ./ElasticSearch/logs:/usr/share/elasticsearch/logs
+    hostname: elasticsearch
+    restart: always
     privileged: true
     ports:
       - 9200:9200
@@ -39,3 +41,18 @@ services:
     networks:
       nta-networks:
         ipv4_address: 192.168.110.3
+
+  nta-kibana:
+    image: kibana:7.10.1
+    container_name: nta-kibana
+    environment:
+      - elasticsearch.hosts=http://elasticsearch:9200
+    hostname: kibana
+    depends_on:
+      - nta-elasticsearch
+    restart: always
+    ports:
+      - "5601:5601"
+    networks:
+      nta-networks:
+        ipv4_address: 192.168.110.4
