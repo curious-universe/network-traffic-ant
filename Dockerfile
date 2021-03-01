@@ -17,3 +17,5 @@ RUN echo \
     apt-get install -y net-tools libpcap-dev
 
 WORKDIR /www
+
+CMD ["bash"]

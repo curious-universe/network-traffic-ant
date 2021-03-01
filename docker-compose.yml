@@ -1,0 +1,41 @@
+version: '3'
+
+networks:
+  nta-networks:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.110.0/24
+
+services:
+  nta:
+    container_name: nta
+    build:
+      context: ./
+    volumes:
+      - ./:/www
+    privileged: true
+    networks:
+      nta-networks:
+        ipv4_address: 192.168.110.2
+    stdin_open: true
+    tty: true
+
+  nta-elasticsearch:
+    container_name: nta-elasticsearch
+    build: ./ElasticSearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./ElasticSearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - ./ElasticSearch/data:/usr/share/elasticsearch/data
+      - ./ElasticSearch/logs:/usr/share/elasticsearch/logs
+    privileged: true
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      nta-networks:
+        ipv4_address: 192.168.110.3
