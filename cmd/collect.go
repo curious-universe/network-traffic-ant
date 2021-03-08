@@ -31,20 +31,20 @@ import (
 	"time"
 )
 
-type recordCmdArgs struct {
+type collectCmdArgs struct {
 	Interface     string
 	BPF           string
 	ProcessBinary string
 	ProcessPid    int
 }
 
-var RecordCmdArgs recordCmdArgs
+var CollectCmdArgs collectCmdArgs
 
 func init() {
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.Interface, "interface", "i", findFirstDevice().Name, "Name of network card interface")
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.BPF, "bpf", "b", "", "BPF filter")
-	recordCmd.Flags().StringVarP(&RecordCmdArgs.ProcessBinary, "process_binary", "p", "", "The Process Name")
-	recordCmd.Flags().IntVarP(&RecordCmdArgs.ProcessPid, "pid", "", 0, "The Process pid")
+	recordCmd.Flags().StringVarP(&CollectCmdArgs.Interface, "interface", "i", findFirstDevice().Name, "Name of network card interface")
+	recordCmd.Flags().StringVarP(&CollectCmdArgs.BPF, "bpf", "b", "", "BPF filter")
+	recordCmd.Flags().StringVarP(&CollectCmdArgs.ProcessBinary, "process_binary", "p", "", "The Process Name")
+	recordCmd.Flags().IntVarP(&CollectCmdArgs.ProcessPid, "pid", "", 0, "The Process pid")
 
 	if err := recordCmd.MarkFlagRequired("process_binary"); err != nil {
 		zaplog.S().Fatal(err)
@@ -59,12 +59,12 @@ var recordCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		zaplog.S().Infof("%#v", config.GetGlobalConfig())
 		// Find Process
-		_, err := process.FindProcessByName(RecordCmdArgs.ProcessBinary)
+		_, err := process.FindProcessByName(CollectCmdArgs.ProcessBinary)
 		if err == nerror.ErrTooManySameNameProcess {
-			if RecordCmdArgs.ProcessPid == 0 {
+			if CollectCmdArgs.ProcessPid == 0 {
 				zaplog.S().Fatal(nerror.ErrProcessPidMustNotNil.Error())
 			}
-			_, err = process.FindProcessByNameAndPid(RecordCmdArgs.ProcessBinary, RecordCmdArgs.ProcessPid)
+			_, err = process.FindProcessByNameAndPid(CollectCmdArgs.ProcessBinary, CollectCmdArgs.ProcessPid)
 			if err == nerror.ErrNotFoundProcess {
 				zaplog.S().Fatal(nerror.ErrNotFoundProcess.Error())
 			}
@@ -72,7 +72,7 @@ var recordCmd = &cobra.Command{
 		nerror.MustNil(err)
 
 		// Open device
-		handle, err := pcap.OpenLive(RecordCmdArgs.Interface, 1024, false, 30*time.Second)
+		handle, err := pcap.OpenLive(CollectCmdArgs.Interface, 1024, false, 30*time.Second)
 		nerror.MustNil(err)
 		defer handle.Close()
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType())

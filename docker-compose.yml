@@ -29,9 +29,9 @@ services:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-      - ./build/elasticSearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
-      - ./build/elasticSearch/data:/usr/share/elasticsearch/data
-      - ./build/elasticSearch/logs:/usr/share/elasticsearch/logs
+      - ./build/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - ./build/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./build/elasticsearch/logs:/usr/share/elasticsearch/logs
     hostname: elasticsearch
     restart: always
     privileged: true
@@ -56,3 +56,19 @@ services:
     networks:
       nta-networks:
         ipv4_address: 192.168.110.4
+
+  nta-elastichd:
+    image: containerize/elastichd:latest
+    container_name: nta-elastichd
+    environment:
+      - discovery.type=single-node
+    depends_on:
+      - nta-elasticsearch
+    restart: always
+    ports:
+      - 9800:9800
+    networks:
+      nta-networks:
+        ipv4_address: 192.168.110.5
+    links:
+      - nta-elasticsearch:demo
