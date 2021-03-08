@@ -24,14 +24,14 @@ services:
 
   nta-elasticsearch:
     container_name: nta-elasticsearch
-    build: ./ElasticSearch
+    build: ./build/elasticSearch
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-      - ./ElasticSearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
-      - ./ElasticSearch/data:/usr/share/elasticsearch/data
-      - ./ElasticSearch/logs:/usr/share/elasticsearch/logs
+      - ./build/elasticSearch/config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - ./build/elasticSearch/data:/usr/share/elasticsearch/data
+      - ./build/elasticSearch/logs:/usr/share/elasticsearch/logs
     hostname: elasticsearch
     restart: always
     privileged: true
