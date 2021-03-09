@@ -2,11 +2,12 @@ package elasticsearch
 
 import (
 	"context"
+	"github.com/curious-universe/network-traffic-ant/zaplog"
 	"github.com/olivere/elastic/v7"
 )
 
 var client *elastic.Client
-var host = "http://192.168.5.193:9200"
+var host = "http://elasticsearch:9200"
 
 //初始化
 func init() {
@@ -17,15 +18,27 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	_, _, err = client.Ping(host).Do(context.Background())
+	info, code, err := client.Ping(host).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
+	zaplog.S().Infof("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
 
-	_, err = client.ElasticsearchVersion(host)
+	esversion, err := client.ElasticsearchVersion(host)
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Printf("Elasticsearch version %s\n", esversion)
+	zaplog.S().Infof("Elasticsearch version %s\n", esversion)
+}
+
+func Create(eIndex string, eBody interface{}) {
+	put1, err := client.Index().
+		Index(eIndex).
+		BodyJson(eBody).
+		Do(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	zaplog.S().Info(put1)
+	zaplog.S().Infof("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
 }

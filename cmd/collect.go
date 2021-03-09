@@ -19,6 +19,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/curious-universe/network-traffic-ant/config"
+	"github.com/curious-universe/network-traffic-ant/elasticsearch"
 	"github.com/curious-universe/network-traffic-ant/nerror"
 	"github.com/curious-universe/network-traffic-ant/process"
 	"github.com/curious-universe/network-traffic-ant/zaplog"
@@ -53,7 +54,7 @@ func init() {
 }
 
 var recordCmd = &cobra.Command{
-	Use:   "record",
+	Use:   "collect",
 	Short: getRecordCmdShort(),
 	Long:  getRecordCmdLong(),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -104,6 +105,11 @@ func printPacketInfo(packet gopacket.Packet) {
 		// Ethernet type is typically IPv4 but could be ARP or other
 		fmt.Println("Ethernet type: ", ethernetPacket.EthernetType)
 		fmt.Println()
+		elasticsearch.Create("ethernet-packet",
+			fmt.Sprintf(`{"source_mac":"%s","dst_mac":"%s","ethernet_type":"%s"}`,
+				ethernetPacket.SrcMAC.String(),
+				ethernetPacket.DstMAC.String(),
+				ethernetPacket.EthernetType.String()))
 	}
 	// Let's see if the packet is IP (even though the ether type told us)
 	ipLayer := packet.Layer(layers.LayerTypeIPv4)
@@ -118,6 +124,10 @@ func printPacketInfo(packet gopacket.Packet) {
 		fmt.Printf("From %s to %s\n", ip.SrcIP, ip.DstIP)
 		fmt.Println("Protocol: ", ip.Protocol)
 		fmt.Println()
+		elasticsearch.Create("ip-packet", fmt.Sprintf(`{"source_ip":"%s","dst_ip":"%s","protocol":"%s"}`,
+			ip.SrcIP.String(),
+			ip.DstIP.String(),
+			ip.Protocol.String()))
 	}
 	// Let's see if the packet is TCP
 	tcpLayer := packet.Layer(layers.LayerTypeTCP)
