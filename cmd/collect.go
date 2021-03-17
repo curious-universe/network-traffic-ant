@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/curious-universe/network-traffic-ant/collect"
 	"github.com/curious-universe/network-traffic-ant/config"
 	"github.com/curious-universe/network-traffic-ant/elasticsearch"
 	"github.com/curious-universe/network-traffic-ant/nerror"
@@ -78,7 +79,8 @@ var recordCmd = &cobra.Command{
 		defer handle.Close()
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 		for packet := range packetSource.Packets() {
-			printPacketInfo(packet)
+			//printPacketInfo(packet)
+			collect.SavePacketInfo(packet)
 		}
 	},
 }

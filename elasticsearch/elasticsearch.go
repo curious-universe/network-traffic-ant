@@ -2,6 +2,7 @@ package elasticsearch
 
 import (
 	"context"
+	"fmt"
 	"github.com/curious-universe/network-traffic-ant/zaplog"
 	"github.com/olivere/elastic/v7"
 )
@@ -32,6 +33,7 @@ func init() {
 }
 
 func Create(eIndex string, eBody interface{}) {
+	fmt.Println(eBody)
 	put1, err := client.Index().
 		Index(eIndex).
 		BodyJson(eBody).
